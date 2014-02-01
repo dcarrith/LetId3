@@ -44,32 +44,33 @@ class LetId3 extends GetId3 {
 					// Base64 decode it
 					$art_file_decoded = base64_decode($art_file_image_data);
 
-				if (($art_file_decoded !== false) && ($art_file_decoded != '') && ($art_file_decoded !== null) && ($art_file_decoded !== NULL) && ($art_file_decoded !== "NULL") && (isset($art_file_decoded))) {
+					if (($art_file_decoded !== false) && ($art_file_decoded != '') && ($art_file_decoded !== null) && ($art_file_decoded !== NULL) && ($art_file_decoded !== "NULL") && (isset($art_file_decoded))) {
 
-					if (strpos($art_file_decoded, "image/jpeg")) {
+						if (strpos($art_file_decoded, "image/jpeg")) {
 
-						// Need to truncate off the mimetype info since it doesn't need to be written with the file
-						$art_file_decoded_truncated = substr($art_file_decoded, 42, (strlen($art_file_decoded) - 42));
+							// Need to truncate off the mimetype info since it doesn't need to be written with the file
+							$art_file_decoded_truncated = substr($art_file_decoded, 42, (strlen($art_file_decoded) - 42));
 
-					} else if (strpos($art_file_decoded, "image/png")) {
+						} else if (strpos($art_file_decoded, "image/png")) {
 
-						// Need to truncate off the mimetype info since it doesn't need to be written with the file
-						$art_file_decoded_truncated = substr($art_file_decoded, 41, (strlen($art_file_decoded) - 41));
+							// Need to truncate off the mimetype info since it doesn't need to be written with the file
+							$art_file_decoded_truncated = substr($art_file_decoded, 41, (strlen($art_file_decoded) - 41));
 
-					} else {
+						} else {
 
-						// Need to truncate off the mimetype info since it doesn't need to be written with the file
-						$art_file_decoded_truncated = substr($art_file_decoded, 42, (strlen($art_file_decoded) - 42));
-					}
+							// Need to truncate off the mimetype info since it doesn't need to be written with the file
+							$art_file_decoded_truncated = substr($art_file_decoded, 42, (strlen($art_file_decoded) - 42));
+						}
 
-					return $art_file_decoded_truncated;
-				} 
+						return $art_file_decoded_truncated;
+					} 
 
-				return $art_file_image_data;
+					return $art_file_image_data;
 
-			} else { // must be mp3
+				} else { // must be mp3
 		    
-				return $id3['comments']['picture'][0]['data'];
+					return $id3['comments']['picture'][0]['data'];
+				}
 			}
 		}
 	}
