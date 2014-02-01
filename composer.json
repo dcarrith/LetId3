@@ -1,5 +1,5 @@
 {
-    "name": "dcarrith/let-id3",
+    "name": "dcarrith/letid3",
     "description": "",
     "authors": [
         {
@@ -9,7 +9,8 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "illuminate/support": "4.1.*"
+        "illuminate/support": "4.1.*",
+        "phansys/getid3": "2.1.*@dev"
     },
     "autoload": {
         "classmap": [
@@ -19,5 +20,5 @@
             "Dcarrith\\LetId3\\": "src/"
         }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
