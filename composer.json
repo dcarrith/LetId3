@@ -1,0 +1,23 @@
+{
+    "name": "dcarrith/let-id3",
+    "description": "",
+    "authors": [
+        {
+            "name": "Dave Carrithers",
+            "email": "dcarrith@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.1.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Dcarrith\\LetId3\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
