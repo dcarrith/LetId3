@@ -5,6 +5,9 @@ use \GetId3\GetId3Core as GetId3;
 class LetId3 extends GetId3 {
 
 	/*
+	 * GetId3 seems to parse the ID3 tags into a flat array structure, so we need to keep track of when we find an essential 
+	 * tag so we can then grab the value that's stored in the "data" element later on in the iteration of the array
+	 * 
 	 * ID3v1.x - http://en.wikipedia.org/wiki/ID3#ID3v1
 	 *
 	 * 	Title
@@ -34,7 +37,7 @@ class LetId3 extends GetId3 {
 	// This is the default array of tags we care about (not sure if we care about "filename", "filepath", and "filenamepath" yet)
 	private $_essentialTags = array( "TIT2", "TPE1", "TALB", "TRCK", "APIC", "artist", "album", "track", "picture" );
 
-	// This maps some of the interchangeable tags back and forth
+	// This maps some of the interchangeable tags that we care about back and forth
 	private $_alternativeTags = array( 	"TIT2" => "title", 
 						"TPE1" => "artist", 
 						"TALB" => "album", 
@@ -44,7 +47,7 @@ class LetId3 extends GetId3 {
 						"album" => "TALB",
 						"track" => "TRCK"	);
 	
-	// This is the list of tags that possibly need to be cleaned up a bit
+	// This is the list of tags that possibly need the values cleaned up a bit
 	private $_needsCleaning = array(	"TIT2" => "title", 
 						"TPE1" => "artist", 
 						"TALB" => "album", 
@@ -52,15 +55,18 @@ class LetId3 extends GetId3 {
 						"artist" => "TPE1",
 						"album" => "TALB"	);
 
-	// GetId3 seems to parse the ID3 tags into a flat array structure, so we need to keep track of when we find an essential tag so we can then grab
-	// the value that's stored in the "data" element later on in the iteration of the array
-	//private $_currentTagKey = null;
-
         function __construct() { 
 
 		parent::__construct();
 	}
 
+	/**
+	 * Parses the APIC and picture id3 data into the 
+	 * corresponding properties and then returns the data
+	 *
+	 * @param array $id3 - the analyzed id3 data array
+	 * @return the binary picture data
+	 */
 	public function getAlbumArtData( $id3 ) {
 
 		// Parse out only the "APIC" and "picture" data into the essentialTagData array
@@ -82,6 +88,15 @@ class LetId3 extends GetId3 {
 		return null;
 	}
 	
+	/**
+	 * Recursive function for parsing out select tags from 
+         * the analyzed id3 data array into the corresponding 
+	 * magic properties
+	 *
+	 * @param array $id3 - the analyzed id3 data array
+	 * @param array $target - the array of tags that are of interest
+	 * @return void
+	 */
 	public function parseEssentialTagData( $id3, $target = null ) {
 
 		// Use the passed in target parameter if it's set, otherwise, just use the default list of all essential tags
@@ -135,8 +150,15 @@ class LetId3 extends GetId3 {
 		}
 	}
 
+	/**
+	 * Cleans up a tag so that it's stored properly
+	 *
+	 * @param string $tag - a tag value
+	 * @return cleaned up tag
+	 */
 	public function clean( $tag ) {
 
+		// I was seeing an issue with & being encoded to &amp; which would then make it so MPD couldn't find it
 		$tag = html_entity_decode( $tag );
 
 		// Replace /, <, >, | and : with nothing
@@ -148,33 +170,39 @@ class LetId3 extends GetId3 {
 		return $tag;
 	}
 
-	public function __get($name) {
+	/**
+	 * dynamically retrieve attributes from the object.
+	 *
+	 * @param string $key
+	 * @return mixed
+	 */
+	public function __get( $key ) {
 
-		if ( array_key_exists( $name, $this->_data )) {
+		if ( array_key_exists( $key, $this->_data )) {
 
-			if ( in_array( $name, $this->_needsCleaning )) {
+			if ( in_array( $key, $this->_needsCleaning )) {
 
-				return $this->clean( $this->_data[$name] );
+				return $this->clean( $this->_data[$key] );
 
 			} else {
 
-				return $this->_data[$name];
+				return $this->_data[$key];
 			}
 		
 		} else {
 
 			// If the $name isn't set, then let's see if has an alternative that may be set
-			if( in_array( $name, $this->_alternativeTags ) ) {
+			if( in_array( $key, $this->_alternativeTags ) ) {
 			
-				if ( array_key_exists( $this->_alternativeTags[ $name ], $this->_data )) {
+				if ( array_key_exists( $this->_alternativeTags[ $key ], $this->_data )) {
 
-					if ( in_array( $name, $this->_needsCleaning )) {
+					if ( in_array( $key, $this->_needsCleaning )) {
 
-						return $this->clean( $this->_alternativeTags[ $name ] );
+						return $this->clean( $this->_alternativeTags[ $key ] );
 
 					} else {
 
-						return $this->_alternativeTags[ $name ];
+						return $this->_alternativeTags[ $key ];
 					}
 				}
 			}
@@ -182,7 +210,7 @@ class LetId3 extends GetId3 {
 
 		$trace = debug_backtrace();
 
-		trigger_error(	'Undefined property via __get(): ' . $name .
+		trigger_error(	'Undefined property via __get(): ' . $key .
 				' in ' . $trace[0]['file'] .
 				' on line ' . $trace[0]['line'],
 				E_USER_NOTICE	);
@@ -190,15 +218,35 @@ class LetId3 extends GetId3 {
 		return null;
 	}
 
-	public function __set( $name, $value ) {
-		$this->_data[$name] = $value;
+	/**
+	 * dynamically set properties of the object.
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @return void
+	 */
+	public function __set( $key, $value ) {
+
+		$this->_data[ $key ] = $value;
 	}
 
-	public function __isset( $name ) {
-		return isset( $this->_data[$name] );
+	/**
+	 * Dynamically determine if a dynamic property exists
+	 *
+	 * @param string $key
+	 * @return bool
+	 */
+	public function __isset( $key ) {
+		return isset( $this->_data[$key] );
 	}
 
-	public function __unset( $name ) {
-		unset( $this->_data[$name] );
+	/**
+	 * Dynamically unset a dynamic property
+	 *
+	 * @param string $key
+	 * @return bool
+	 */
+	public function __unset( $key ) {
+		unset( $this->_data[$key] );
 	}
 }
