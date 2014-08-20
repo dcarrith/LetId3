@@ -1,6 +1,7 @@
 <?php namespace Dcarrith\LetId3;
 
 use Illuminate\Support\ServiceProvider;
+use Dcarrith\LetID3\LetID3;
 
 class LetId3ServiceProvider extends ServiceProvider {
 
@@ -9,7 +10,7 @@ class LetId3ServiceProvider extends ServiceProvider {
 	 *
 	 * @var bool
 	 */
-	protected $defer = false;
+	protected $defer = true;
 
 	/**
 	 * Bootstrap the application events.
@@ -28,7 +29,11 @@ class LetId3ServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+		$this->app['letid3'] = $this->app->share(function($app)
+		{
+			// Instantiate the LetId3 object
+			return new LetId3();
+		});
 	}
 
 	/**
@@ -38,7 +43,7 @@ class LetId3ServiceProvider extends ServiceProvider {
 	 */
 	public function provides()
 	{
-		return array();
+		return array('letid3');
 	}
 
 }
