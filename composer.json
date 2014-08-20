@@ -1,6 +1,8 @@
 {
     "name": "dcarrith/letid3",
     "description": "",
+    "keywords": ["GetID3", "Laravel", "LetID3"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Dave Carrithers",
@@ -13,9 +15,7 @@
         "phansys/getid3": "2.1.*@dev"
     },
     "autoload": {
-        "classmap": [
-            "src/migrations"
-        ],
+        "classmap": [],
         "psr-0": {
             "Dcarrith\\LetId3\\": "src/"
         }
