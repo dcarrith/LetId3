@@ -1,9 +1,9 @@
-<?php namespace Dcarrith\LetId3;
+<?php namespace Dcarrith\LetID3;
 
 use Illuminate\Support\ServiceProvider;
 use Dcarrith\LetID3\LetID3;
 
-class LetId3ServiceProvider extends ServiceProvider {
+class LetID3ServiceProvider extends ServiceProvider {
 
 	/**
 	 * Indicates if loading of the provider is deferred.
@@ -31,8 +31,8 @@ class LetId3ServiceProvider extends ServiceProvider {
 	{
 		$this->app['letid3'] = $this->app->share(function($app)
 		{
-			// Instantiate the LetId3 object
-			return new LetId3();
+			// Instantiate the LetID3 object
+			return new LetID3();
 		});
 	}
 

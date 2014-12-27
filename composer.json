@@ -17,7 +17,7 @@
     "autoload": {
         "classmap": [],
         "psr-0": {
-            "Dcarrith\\LetId3\\": "src/"
+            "Dcarrith\\LetID3\\": "src/"
         }
     },
     "minimum-stability": "dev"

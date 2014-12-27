@@ -1,6 +1,6 @@
-<?php namespace Dcarrith\LetId3;
+<?php namespace Dcarrith\LetID3;
 
-class LetId3Facade extends \Illuminate\Support\Facades\Facade {
+class LetID3Facade extends \Illuminate\Support\Facades\Facade {
 
 	/**
 	 * Get the registered name of the component.

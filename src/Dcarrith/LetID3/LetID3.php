@@ -1,10 +1,10 @@
-<?php namespace Dcarrith\LetId3;
+<?php namespace Dcarrith\LetID3;
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use \GetId3\GetId3Core as GetId3;
 
-class LetId3 extends GetId3 {
+class LetID3 extends GetId3 {
 
 	/*
 	 * GetId3 seems to parse the ID3 tags into a flat array structure, so we need to keep track of when we find an essential
@@ -254,4 +254,15 @@ class LetId3 extends GetId3 {
 	public function __unset( $key ) {
 		unset( $this->_data[$key] );
 	}
+
+	/**
+	 * Traditional get method that will utilize the magic __get method
+	 *
+	 * @param string $key
+	 * @return value at $this->_data[$key] if exists
+	 */
+	public function get( $key ) {
+		return $this->$key;
+	}
+
 }
