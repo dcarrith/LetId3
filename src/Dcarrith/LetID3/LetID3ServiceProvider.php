@@ -19,7 +19,7 @@ class LetID3ServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('dcarrith/letid3');
+		//$this->package('dcarrith/letid3');
 	}
 
 	/**
